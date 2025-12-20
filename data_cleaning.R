@@ -57,7 +57,7 @@ df_2 <- df %>%
 
     Wellbeing_Score = Mental_Health_Score + Sleep_Hours_Per_Night - Addicted_Score,
 
-    Relationship_Status_Binary = case_when(
+    Relationship_Status_Encoded = case_when(
       Relationship_Status == "Single" ~ 1,
       Relationship_Status == "In Relationship" ~ 2,
       Relationship_Status == "Complicated" ~ 3
@@ -75,6 +75,11 @@ df_2 <- df %>%
       Academic_Level == "Undergraduate" ~ 2,
       Academic_Level == "Graduate" ~ 3
 
+    ),
+
+    Gender_Encoded = case_when(
+      Gender == "Male" ~ 1,
+      Gender == "Female" ~ 2
     )
 
 
