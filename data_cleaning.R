@@ -11,7 +11,6 @@ print(missing_vals)
 
 #Create new derived features (feature engineering)
 
-#Time & usage related features
 
 df_2 <- df %>%
   mutate(
@@ -80,8 +79,26 @@ df_2 <- df %>%
     Gender_Encoded = case_when(
       Gender == "Male" ~ 1,
       Gender == "Female" ~ 2
-    )
+    ),
 
+    Academic_Risk_Index = (
+      ((Addicted_Score - min(Addicted_Score)) / 
+      (max(Addicted_Score) - min(Addicted_Score)) + 
+        
+      (Avg_Daily_Usage_Hours - min(Avg_Daily_Usage_Hours)) /
+      (max(Avg_Daily_Usage_Hours) - min(Avg_Daily_Usage_Hours)) +
+      
+      1 - (
+      (Sleep_Hours_Per_Night - min(Sleep_Hours_Per_Night)) /
+      (max(Sleep_Hours_Per_Night) - min(Sleep_Hours_Per_Night))
+      ) +
+      
+      1 - (
+      (Mental_Health_Score - min(Mental_Health_Score)) /
+      (max(Mental_Health_Score) - min(Mental_Health_Score))
+  )) / 4
+      
+    )
 
   )
 
