@@ -1,0 +1,13 @@
+#Python Libraries
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+joblib
+streamlit
+
+#R Libraries
+dplyr
+readr
+ggplot2
