@@ -15,6 +15,12 @@ print(missing_vals)
 
 df_2 <- df %>%
   mutate(
+
+        # Normalized base components
+    Usage_norm = rescale(Avg_Daily_Usage_Hours),
+    Sleep_norm = rescale(Sleep_Hours_Per_Night),
+    Conflicts_norm = rescale(Conflicts_Over_Social_Media),
+    Sleep_Deficit_norm = rescale(pmax(0, 8 - Sleep_Hours_Per_Night)),
     
 
     #Balance_Score = Sleep_Hours_Per_Night - Avg_Daily_Usage_Hours,
@@ -88,9 +94,20 @@ df_2 <- df %>%
       rescale(Avg_Daily_Usage_Hours),
       1- rescale(Sleep_Hours_Per_Night),
       1- rescale(Mental_Health_Score)
-    ))
+    )),
 
+    Addicted_Score_Pred =
+  0.70 * Avg_Daily_Usage_Hours +
+  0.15 * Conflicts_Over_Social_Media +
+  0.15 * pmax(0, 8 - Sleep_Hours_Per_Night)
+  + 2
+  ,
+
+    MH_Score_Pred =
+      0.5 * Sleep_Hours_Per_Night +
+      0.3 * (Avg_Daily_Usage_Hours) +
+      0.2 * (Conflicts_Over_Social_Media)
   )
 
 head(df_2)
-write.csv(df_2, "/Users/ethanjohn/Desktop/Data Science/Projects/MH_Dashboard2/Students_Social_Media_Addiction_FE.csv", row.names = FALSE)
+write.csv(df_2, "/Users/ethanjohn/Desktop/Data Science/Projects/MentalHealthDashboard/Students_Social_Media_Addiction_FE.csv", row.names = FALSE)
