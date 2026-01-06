@@ -100,7 +100,6 @@ df_2 <- df %>%
   0.70 * Avg_Daily_Usage_Hours +
   0.15 * Conflicts_Over_Social_Media +
   0.15 * pmax(0, 8 - Sleep_Hours_Per_Night)
-  + 2
   ,
 
     MH_Score_Pred =
