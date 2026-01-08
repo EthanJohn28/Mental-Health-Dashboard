@@ -1,6 +1,10 @@
 import joblib
 import streamlit as st
 import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+df = pd.read_csv("/Users/ethanjohn/Desktop/Data Science/Projects/MentalHealthDashboard/Students_Social_Media_Addiction_FE.csv")
 
 bias_params = joblib.load("bias_params.pkl")
 model = joblib.load("logistic_model.pkl")
@@ -19,7 +23,7 @@ min_mh_score = 0
 max_mh_score = 10
 
 st.title("Student Mental Health Dashboard")
-st.write("Description goes here: ")
+st.write("This interactive tool estimates mental health, addiction, academic risk, and likelihood of social media affecting academic performance.")
 
 col1, col2 = st.columns(2)
 
@@ -131,4 +135,32 @@ st.metric(
     value="Yes" if pred_class == 1 else "No",
     delta=f"Confidence: {pred_proba*100:.1f}%"
 )
+
+with col2:
+    st.subheader("Score Distribution")
+
+    all_addicted_scores = df["Addicted_Score"].values
+    all_mh_scores = df["Mental_Health_Score"].values
+
+    fig, axes = plt.subplots(2,1,figsize=(6,8))
+
+    axes[0].hist(all_addicted_scores, bins=6, color="lightcoral", alpha=0.7)
+    axes[0].axvline(addicted_score_pred, color="red", linestyle="dashed", linewidth=2)
+    axes[0].set_title("Addiction Score Distribution")
+    axes[0].set_xlabel("Score")
+    axes[0].set_ylabel("Count")
+
+    axes[1].hist(all_mh_scores, bins=6, color="lightgreen", alpha=0.7)
+    axes[1].axvline(mh_score_pred, color="green", linestyle="dashed", linewidth=2)
+    axes[1].set_title("Mental Health Score Distribution")
+    axes[1].set_xlabel("Score")
+    axes[1].set_ylabel("Count")
+    plt.tight_layout()
+    st.pyplot(fig)
+
+
+
+
+
+
 st.caption("This tool is for educational purposes, not medical advice. ")
