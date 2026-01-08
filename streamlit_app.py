@@ -3,12 +3,13 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-
-df = pd.read_csv("/Users/ethanjohn/Desktop/Data Science/Projects/MentalHealthDashboard/Students_Social_Media_Addiction_FE.csv")
+df = pd.read_csv("Students_Social_Media_Addiction_FE.csv")
 
 bias_params = joblib.load("bias_params.pkl")
 model = joblib.load("logistic_model.pkl")
 scaler = joblib.load("scaler.pkl")
+
+
 MH_bias = bias_params["MH_Bias_Factor"]
 A_bias = bias_params["AS_Bias_Factor"]
 
@@ -133,7 +134,7 @@ st.subheader("Predicted Academic Impact")
 st.metric(
     label="Likely to Affect Academic Performance?", 
     value="Yes" if pred_class == 1 else "No",
-    delta=f"Confidence: {pred_proba*100:.1f}%"
+    #delta=f"Confidence: {pred_proba*100:.1f}%"
 )
 
 with col2:
