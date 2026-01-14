@@ -1,4 +1,5 @@
 ![Static Badge](https://img.shields.io/badge/python-3.13-blue)
+![GitHub last commit](https://img.shields.io/github/last-commit/MasterEJ-Robotics/Mental-Health-Dashboard?style=plastic&color=%23734F96)
 
 
 I built a Logistic Regression model that predicts whether social media usage and mental health factors affect academic performance using behavioral, sleep, and well-being features, including a custom Academic Risk Index engineered from normalized inputs.
