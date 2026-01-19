@@ -7,5 +7,5 @@ The model was evaluated on a held-out test set, interpreted through feature coef
 
 Access the Dataset here: https://www.kaggle.com/datasets/adilshamim8/social-media-addiction-vs-relationships/data
 
-Access the Dashboard here: https://masterej-robotics-mental-health-dashboard-streamlit-app-dkr3hc.streamlit.app/
+Access the Dashboard here: [https://masterej-robotics-mental-health-dashboard-streamlit-app-dkr3hc.streamlit.app/](https://share.streamlit.io/user/masterej-robotics)
 
