@@ -142,8 +142,9 @@ with col2:
 
     all_addicted_scores = df["Addicted_Score"].values
     all_mh_scores = df["Mental_Health_Score"].values
+    all_ari_scores = df["Academic_Risk_Index"].values
 
-    fig, axes = plt.subplots(2,1,figsize=(6,8))
+    fig, axes = plt.subplots(3,1,figsize=(6,8))
 
     axes[0].hist(all_addicted_scores, bins=6, color="lightcoral", alpha=0.7)
     axes[0].axvline(addicted_score_pred, color="red", linestyle="dashed", linewidth=2)
@@ -156,6 +157,13 @@ with col2:
     axes[1].set_title("Mental Health Score Distribution")
     axes[1].set_xlabel("Score")
     axes[1].set_ylabel("Count")
+
+    axes[2].hist(all_ari_scores, bins=6, color="lightblue", alpha=0.7)
+    axes[2].axvline(academic_risk_index, color="blue",linestyle="dashed", linewidth=2)
+    axes[2].set_title("Academic Risk Index Distribution")
+    axes[2].set_xlabel("Score")
+    axes[2].set_ylabel("Count")
+
     plt.tight_layout()
     st.pyplot(fig)
 
