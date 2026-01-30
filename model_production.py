@@ -65,5 +65,5 @@ print(f" Median Predicted Confidence Score: {avg_probability}")
 mae = mean_absolute_error(y_test,y_pred)
 print(f"Mean Absolute Error: {mae}")
 
-joblib.dump(log_reg, "logistic_model_2.pkl")
-joblib.dump(scaler, "scaler_2.pkl")
+joblib.dump(log_reg, "logistic_model_production.pkl")
+joblib.dump(scaler, "scaler_production.pkl")
