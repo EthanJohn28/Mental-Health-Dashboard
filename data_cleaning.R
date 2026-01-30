@@ -2,7 +2,7 @@ library(dplyr)
 library(readr)
 library(ggplot2)
 library(scales)
-df <- read.csv("/Users/ethanjohn/Desktop/Data Science/Projects/MentalHealthDashboard/Students Social Media Addiction.csv")
+df <- read.csv("Students Social Media Addiction.csv")
 
 glimpse(df)
 
@@ -22,22 +22,6 @@ df_2 <- df %>%
     Conflicts_norm = rescale(Conflicts_Over_Social_Media),
     Sleep_Deficit_norm = rescale(pmax(0, 8 - Sleep_Hours_Per_Night)),
     
-
-    #Balance_Score = Sleep_Hours_Per_Night - Avg_Daily_Usage_Hours,
-
-    #Usage_Sleep_Ratio = Avg_Daily_Usage_Hours / Sleep_Hours_Per_Night,
-
-    #Usage_Efficiency_Level = case_when(
-        #Usage_Sleep_Ratio < 0.3 ~ "Healthy",
-        #Usage_Sleep_Ratio < 0.6 ~ "Moderate",
-        #TRUE ~ "Unhealthy"
-    #),
-    
-    #Platform_Usage = paste(Most_Used_Platform, "-", Usage_Level),
-
-    #Lifestyle_Balance_Score = (Sleep_Hours_Per_Night - Avg_Daily_Usage_Hours) * Mental_Health_Score,
-
-    # Note, maybe use ML to predict factors that influence affects academic performance
     Usage_Hrs_Level = case_when(
         Avg_Daily_Usage_Hours < 2 ~ "Low",
         Avg_Daily_Usage_Hours < 5 ~ "Medium",
@@ -87,7 +71,6 @@ df_2 <- df %>%
       Gender == "Male" ~ 1,
       Gender == "Female" ~ 2
     ),
-
 
     Academic_Risk_Index = rowMeans(cbind(
       rescale(Addicted_Score),

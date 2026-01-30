@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 df = pd.read_csv("Students_Social_Media_Addiction_FE.csv")
 
-bias_params = joblib.load("bias_params.pkl")
-model = joblib.load("logistic_model.pkl")
-scaler = joblib.load("scaler.pkl")
+bias_params = joblib.load("bias_params_production.pkl")
+model = joblib.load("logistic_model_production.pkl")
+scaler = joblib.load("scaler_production.pkl")
 
 
 MH_bias = bias_params["MH_Bias_Factor"]
@@ -17,7 +17,7 @@ A_bias = bias_params["AS_Bias_Factor"]
 min_addicted_score = 0
 max_addicted_score = 10
 min_usage_hrs = 0
-max_usage_hrs = 24
+max_usage_hrs = 12
 min_sleep_hrs = 0
 max_sleep_hrs = 12
 min_mh_score = 0
@@ -29,18 +29,19 @@ st.write("This interactive tool estimates mental health, addiction, academic ris
 col1, col2 = st.columns(2)
 
 with col1:
+    st.subheader("Input Data Here: ")
 
     sleep_hrs = st.slider(
         label="Hours of sleep per night",
-        min_value=0,
-        max_value=12,
+        min_value=min_sleep_hrs,
+        max_value=max_sleep_hrs,
         value=7
     )
     
     usage_hrs = st.slider(
         label="Hours spent on social media per day",
-        min_value=0,
-        max_value=12,
+        min_value=min_usage_hrs,
+        max_value=max_usage_hrs,
         value=3
     )
 
@@ -53,30 +54,28 @@ with col1:
     academic_level = st.selectbox(
         "Enter academic level",
         ("High School", "Undergraduate", "Graduate"),
-        placeholder="Enter academic level")
+        )
 
 # Calc MH and A scores
-def calc_mh_score(usage_hrs,sleep_hrs,conflicts):
+def calc_mh_score(usage_hrs,sleep_hrs):
     raw = (
-        0.6 * sleep_hrs - 
-        0.25 * usage_hrs - 
-        0.15 * conflicts
+        0.75 * sleep_hrs - 
+        0.25 * usage_hrs
     )
 
-    return np.clip(raw + MH_bias, 0, 10)
+    return np.clip(raw + MH_bias, min_mh_score, max_mh_score)
 
-def calc_addicted_score(usage_hrs,sleep_hrs,conflicts):
+def calc_addicted_score(usage_hrs,sleep_hrs):
     raw = (
-        0.7 * usage_hrs +
-        0.15 * conflicts + 
-        0.15 * max(0, 8-sleep_hrs)
+        0.75 * usage_hrs +
+        0.25 * max(0, 8-sleep_hrs)
     )
 
-    return np.clip(raw + A_bias, 0, 10)
+    return np.clip(raw + A_bias, min_addicted_score, max_addicted_score)
 
-mh_score_pred = calc_mh_score(usage_hrs,sleep_hrs,conflicts_count)
+mh_score_pred = calc_mh_score(usage_hrs,sleep_hrs)
 
-addicted_score_pred = calc_addicted_score(usage_hrs,sleep_hrs,conflicts_count)
+addicted_score_pred = calc_addicted_score(usage_hrs,sleep_hrs)
 
 def rescale(value,min_val,max_val):
     if max_val - min_val == 0:
@@ -94,15 +93,20 @@ academic_risk_index = np.mean([
     1 - sleep_scaled,
     1 - mh_scaled
 ])
+
+
 st.subheader("Estimated Scores")
 st.metric(
-    "Estimated Addiction Score (0-10)", round(addicted_score_pred,2)
+    label="Estimated Addiction Score (0-10)", 
+    value = f"{addicted_score_pred:.2f}"
 )
 st.metric(
-    "Estimated Mental Health Score Score (0-10)", round(mh_score_pred,2)
+    label="Estimated Mental Health Score Score (0-10):",
+    value= f"{mh_score_pred:.2f}"
 )
 st.metric(
-    "Predicted Academic Risk (0-1)", f"{academic_risk_index:.2f}"
+    label="Predicted Academic Risk (0-1): ",
+    value=f"{academic_risk_index:.2f}"
 )
 
 
@@ -116,13 +120,10 @@ academic_mapping = {
 academic_level_encoded = academic_mapping[academic_level]
 
 X_input = np.array([[
-    addicted_score_pred,
-    usage_hrs,
     sleep_hrs,
-    mh_score_pred,
-    academic_level_encoded,
-    conflicts_count,
-    academic_risk_index
+    usage_hrs,
+    academic_level_encoded
+
 ]])
 
 X_input_scaled = scaler.transform(X_input)
@@ -166,10 +167,6 @@ with col2:
 
     plt.tight_layout()
     st.pyplot(fig)
-
-
-
-
 
 
 st.caption("This tool is for educational purposes, not medical advice. ")
