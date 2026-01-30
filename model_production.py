@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, class
 
 
 
-df = pd.read_csv("Students_Social_Media_Addiction_FE.csv")
+df = pd.read_csv("./data/Students_Social_Media_Addiction_FE.csv")
 
 print("start")
 # Load dataset

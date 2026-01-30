@@ -3,7 +3,7 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-df = pd.read_csv("Students_Social_Media_Addiction_FE.csv")
+df = pd.read_csv("./data/Students_Social_Media_Addiction_FE.csv")
 
 bias_params = joblib.load("bias_params_production.pkl")
 model = joblib.load("logistic_model_production.pkl")
@@ -44,12 +44,6 @@ with col1:
         max_value=max_usage_hrs,
         value=3
     )
-
-    conflicts_count = st.slider(
-        label="Number of social media conflicts",
-        min_value=0,
-        max_value=50,
-        value=0)
 
     academic_level = st.selectbox(
         "Enter academic level",
