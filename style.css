@@ -1,0 +1,23 @@
+.stApp {
+    background-color: #21201fff;
+    font-family: 'Arial', sans-serif;
+}
+
+div[data-testid="stMetricValue"] {
+    font-size: 24px !important;
+    color: #3c8df7ff;
+    font-weight: bold;
+}
+
+.stSlider input[type="range"] {
+    accent-color: #4B0082;
+}
+
+.stCaption { 
+    font-size: 12px;
+    color: #555555
+}
+
+.stSubheader {
+    font-weight: bold;
+}
