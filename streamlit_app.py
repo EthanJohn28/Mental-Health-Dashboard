@@ -3,10 +3,14 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import time
 
-# def load_css(file_name):
-#     with open(file_name) as f:
-#         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+with st.spinner("Loading Dashboard..."):
+    time.sleep(0.3)
+
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 # load_css("style.css")
 
 df = pd.read_csv("./data/Students_Social_Media_Addiction_FE.csv")
@@ -120,18 +124,18 @@ pred_proba = model.predict_proba(X_input_scaled)[0,1]
 with col2: 
     st.subheader("Estimated Scores")
     st.metric(
-        label="Estimated Addiction Score (0-10):", 
+        label="Estimated Addicted Score (0-10):", 
         value = f"{addicted_score_pred:.2f}"
     )
     st.metric(
-        label="Estimated Mental Health Score Score (0-10):",
+        label="Estimated Mental Health Score (0-10):",
         value= f"{mh_score_pred:.2f}"
     )
     st.metric(
         label="Predicted Academic Risk (0-1): ",
         value=f"{academic_risk_index:.2f}"
     )
-    st.subheader("Predicted Academic Impact")
+    st.subheader("Predicted Academic Impact: ")
     st.metric(
         label="Likely to Affect Academic Performance?", 
         value="Yes" if pred_class == 1 else "No",
