@@ -10,6 +10,7 @@ https://www.kaggle.com/datasets/adilshamim8/social-media-addiction-vs-relationsh
 
 ## Access the Dashboard Here: 
 https://masterej-robotics-mental-health-dashboard-streamlit-app-dkr3hc.streamlit.app/
+> **Note:** This Streamlit app is hosted on Streamlit Community Cloud, so the first load may take **15–20 seconds**. Subsequent loads are usually faster.
 
 ## Demo Video:
 [▶️ Watch Full Project Demo](https://www.youtube.com/watch?v=_Ui9etmYKMw)
