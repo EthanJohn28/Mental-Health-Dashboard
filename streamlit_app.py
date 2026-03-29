@@ -19,11 +19,9 @@ bias_params = joblib.load("bias_params_production.pkl")
 model = joblib.load("logistic_model_production.pkl")
 scaler = joblib.load("scaler_production.pkl")
 
-
 MH_bias = bias_params["MH_Bias_Factor"]
 A_bias = bias_params["AS_Bias_Factor"]
 
-# Note to self: verify these scores
 min_addicted_score = 0
 max_addicted_score = 10
 min_usage_hrs = 0
@@ -34,13 +32,19 @@ min_mh_score = 0
 max_mh_score = 10
 
 st.title("Student Mental Health Dashboard")
+st.subheader("Academic Risk Predictor")
 st.write("This interactive tool estimates mental health, addiction, academic risk, and likelihood of social media affecting academic performance.")
 
 col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("Input Data Here: ")
-
+    
+    expander = st.expander("Instructions")
+    expander.write("""
+    Please enter your daily sleep hours and social media usage, and select your academic level using the inputs below.  
+    This information will help the model estimate your mental health and social media addiction risk.
+    """)
     sleep_hrs = st.slider(
         label="Hours of sleep per night",
         min_value=min_sleep_hrs,
@@ -61,7 +65,7 @@ with col1:
         )
 
 # Calc MH and A scores
-def calc_mh_score(usage_hrs,sleep_hrs):
+def calc_mh_score(usage_hrs, sleep_hrs):
     raw = (
         0.75 * sleep_hrs - 
         0.25 * usage_hrs
@@ -69,7 +73,7 @@ def calc_mh_score(usage_hrs,sleep_hrs):
 
     return np.clip(raw + MH_bias, min_mh_score, max_mh_score)
 
-def calc_addicted_score(usage_hrs,sleep_hrs):
+def calc_addicted_score(usage_hrs, sleep_hrs):
     raw = (
         0.75 * usage_hrs +
         0.25 * max(0, 8-sleep_hrs)
@@ -77,9 +81,9 @@ def calc_addicted_score(usage_hrs,sleep_hrs):
 
     return np.clip(raw + A_bias, min_addicted_score, max_addicted_score)
 
-mh_score_pred = calc_mh_score(usage_hrs,sleep_hrs)
+mh_score_pred = calc_mh_score(usage_hrs, sleep_hrs)
 
-addicted_score_pred = calc_addicted_score(usage_hrs,sleep_hrs)
+addicted_score_pred = calc_addicted_score(usage_hrs, sleep_hrs)
 
 def rescale(value,min_val,max_val):
     if max_val - min_val == 0:
@@ -87,9 +91,9 @@ def rescale(value,min_val,max_val):
     return (value - min_val) / (max_val - min_val)
 
 addicted_scaled = rescale(addicted_score_pred, min_addicted_score, max_addicted_score)
-usage_scaled = rescale(usage_hrs,min_usage_hrs,max_usage_hrs)
-sleep_scaled = rescale(sleep_hrs,min_sleep_hrs,max_sleep_hrs)
-mh_scaled = rescale(mh_score_pred,min_mh_score,max_mh_score)
+usage_scaled = rescale(usage_hrs, min_usage_hrs, max_usage_hrs)
+sleep_scaled = rescale(sleep_hrs, min_sleep_hrs, max_sleep_hrs)
+mh_scaled = rescale(mh_score_pred, min_mh_score, max_mh_score)
 
 academic_risk_index = np.mean([
     addicted_scaled,
@@ -97,9 +101,6 @@ academic_risk_index = np.mean([
     1 - sleep_scaled,
     1 - mh_scaled
 ])
-
-
-
 
 # Integrate model
 academic_mapping = {
@@ -121,29 +122,57 @@ X_input_scaled = scaler.transform(X_input)
 
 pred_class = model.predict(X_input_scaled)[0]
 pred_proba = model.predict_proba(X_input_scaled)[0,1]
-with col2: 
+
+with col2:
+
     st.subheader("Estimated Scores")
+
+    expander = st.expander("Instructions")
+    expander.write("""
+This section provides a summary of your individualized scores based on your input
+
+**Estimated Addicted Score:** An indication of your potential risk level of phone addiction, where higher scores reflect increased risk.
+
+**Estimated Mental Health Score:** Represents your projected mental health status on a scale from 0 (poor) to 10 (excellent).
+
+**Predicted Academic Risk:** A combined risk index, ranging from 0 (no risk) to 1 (high risk), incorporating addiction, mental health, usage, and sleep patterns.
+
+**Predicted Academic Impact:** Uses a predictive model to estimate whether your social media habits are likely to negatively affect your academic performance.
+""")
+
     st.metric(
-        label="Estimated Addicted Score (0-10):", 
-        value = f"{addicted_score_pred:.2f}"
+        label="Estimated Addicted Score (0-10):",
+        value=f"{addicted_score_pred:.2f}"
     )
+
     st.metric(
         label="Estimated Mental Health Score (0-10):",
-        value= f"{mh_score_pred:.2f}"
+        value=f"{mh_score_pred:.2f}"
     )
+
     st.metric(
-        label="Predicted Academic Risk (0-1): ",
+        label="Predicted Academic Risk (0-1):",
         value=f"{academic_risk_index:.2f}"
     )
-    st.subheader("Predicted Academic Impact: ")
+
     st.metric(
-        label="Likely to Affect Academic Performance?", 
+        label="Likely to Affect Academic Performance?",
         value="Yes" if pred_class == 1 else "No",
         #delta=f"Confidence: {pred_proba*100:.1f}%"
     )
 
-
 st.subheader("Score Distribution")
+
+expander = st.expander("Score Distribution Overview")
+
+expander.write("""
+The histograms below show how your scores compare to the rest of the sample data. Each distribution represents all users, while the **dashed line** highlights your individual score within each category.
+
+- The wider area of each histogram displays how common different scores are in our dataset.
+- The **dashed vertical line** is your personal value, helping you see where you stand (e.g., average, above, or below the typical range).
+
+These visual summaries can help you interpret your scores and understand how your results relate to others.
+""")
 
 all_addicted_scores = df["Addicted_Score"].values
 all_mh_scores = df["Mental_Health_Score"].values
@@ -171,6 +200,5 @@ axes[2].set_ylabel("Count")
 
 plt.tight_layout()
 st.pyplot(fig)
-
 
 st.caption("This tool is for educational purposes, not medical advice. ")
