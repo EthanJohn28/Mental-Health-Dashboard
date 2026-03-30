@@ -4,6 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import time
+import altair as alt
+from utils import rescale, create_histogram
+from model_utils import calc_mh_score, calc_addicted_score
 
 with st.spinner("Loading Dashboard..."):
     time.sleep(0.3)
@@ -64,31 +67,9 @@ with col1:
         ("High School", "Undergraduate", "Graduate"),
         )
 
-# Calc MH and A scores
-def calc_mh_score(usage_hrs, sleep_hrs):
-    raw = (
-        0.75 * sleep_hrs - 
-        0.25 * usage_hrs
-    )
-
-    return np.clip(raw + MH_bias, min_mh_score, max_mh_score)
-
-def calc_addicted_score(usage_hrs, sleep_hrs):
-    raw = (
-        0.75 * usage_hrs +
-        0.25 * max(0, 8-sleep_hrs)
-    )
-
-    return np.clip(raw + A_bias, min_addicted_score, max_addicted_score)
-
 mh_score_pred = calc_mh_score(usage_hrs, sleep_hrs)
 
 addicted_score_pred = calc_addicted_score(usage_hrs, sleep_hrs)
-
-def rescale(value,min_val,max_val):
-    if max_val - min_val == 0:
-        return 0
-    return (value - min_val) / (max_val - min_val)
 
 addicted_scaled = rescale(addicted_score_pred, min_addicted_score, max_addicted_score)
 usage_scaled = rescale(usage_hrs, min_usage_hrs, max_usage_hrs)
@@ -178,27 +159,35 @@ all_addicted_scores = df["Addicted_Score"].values
 all_mh_scores = df["Mental_Health_Score"].values
 all_ari_scores = df["Academic_Risk_Index"].values
 
-fig, axes = plt.subplots(3,1,figsize=(5,6))
 
-axes[0].hist(all_addicted_scores, bins=6, color="lightcoral", alpha=0.7)
-axes[0].axvline(addicted_score_pred, color="red", linestyle="dashed", linewidth=2)
-axes[0].set_title("Addiction Score Distribution")
-axes[0].set_xlabel("Score")
-axes[0].set_ylabel("Count")
+addicted_hist = create_histogram(
+    all_addicted_scores,
+    addicted_score_pred,
+    "lightcoral",
+    "Addiction Score Distribution",
+    "red",
+    x_domain=[0, 10]
+)
+mh_hist = create_histogram(
+    all_mh_scores,
+    mh_score_pred,
+    "lightgreen",
+    "Mental Health Score Distribution",
+    "green",
+    x_domain=[0, 10]
+)
+ari_hist = create_histogram(
+    all_ari_scores,
+    academic_risk_index,
+    "lightblue",
+    "Academic Risk Index Distribution",
+    "blue",
+    x_domain=[0, 1]
+)
 
-axes[1].hist(all_mh_scores, bins=6, color="lightgreen", alpha=0.7)
-axes[1].axvline(mh_score_pred, color="green", linestyle="dashed", linewidth=2)
-axes[1].set_title("Mental Health Score Distribution")
-axes[1].set_xlabel("Score")
-axes[1].set_ylabel("Count")
-
-axes[2].hist(all_ari_scores, bins=6, color="lightblue", alpha=0.7)
-axes[2].axvline(academic_risk_index, color="blue",linestyle="dashed", linewidth=2)
-axes[2].set_title("Academic Risk Index Distribution")
-axes[2].set_xlabel("Score")
-axes[2].set_ylabel("Count")
-
-plt.tight_layout()
-st.pyplot(fig)
+all_charts = alt.vconcat(addicted_hist, mh_hist, ari_hist).resolve_scale(
+    x="independent",
+    y="shared")
+st.altair_chart(all_charts,use_container_width=True)
 
 st.caption("This tool is for educational purposes, not medical advice. ")
