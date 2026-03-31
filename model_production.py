@@ -1,12 +1,11 @@
 import pandas as pd
 import joblib
 import numpy as np
+import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report, mean_absolute_error
-
-
 
 df = pd.read_csv("./data/Students_Social_Media_Addiction_FE.csv")
 
@@ -15,7 +14,6 @@ print("start")
 
 X = df[["Sleep_Hours_Per_Night", "Avg_Daily_Usage_Hours", "Academic_Level_Encoded"]]
 y = df["Affects_Academic_Performance_Encoded"]
-
 
 # Model Type: Logistic Regression
 
@@ -26,28 +24,21 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42,
     stratify=y)
 
-
 scaler = StandardScaler()
 
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
 log_reg = LogisticRegression(max_iter=1000, C=0.1, class_weight={0: 4, 1: 1})
-
-
 log_reg.fit(X_train_scaled,y_train)
-
 
 y_pred = log_reg.predict(X_test_scaled)
 
 print("Accuracy Score: ", accuracy_score(y_test,y_pred))
 print(classification_report(y_test,y_pred))
 
-
-
 print("Precision score: ", precision_score(y_test,y_pred,average="weighted"))
 print("Recall score: ", recall_score(y_test,y_pred))
-
 
 coefficients = pd.DataFrame(
     {"Feature": X.columns,
