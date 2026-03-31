@@ -31,5 +31,3 @@ def calc_addicted_score(usage_hrs, sleep_hrs):
     )
 
     return np.clip(raw + A_bias, min_addicted_score, max_addicted_score)
-
-

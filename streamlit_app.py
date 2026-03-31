@@ -92,12 +92,11 @@ academic_mapping = {
 
 academic_level_encoded = academic_mapping[academic_level]
 
-X_input = np.array([[
-    sleep_hrs,
-    usage_hrs,
-    academic_level_encoded
-
-]])
+X_input = pd.DataFrame([{
+    "Sleep_Hours_Per_Night": sleep_hrs,
+    "Avg_Daily_Usage_Hours": usage_hrs,
+    "Academic_Level_Encoded": academic_level_encoded,
+}])
 
 X_input_scaled = scaler.transform(X_input)
 
@@ -188,6 +187,6 @@ ari_hist = create_histogram(
 all_charts = alt.vconcat(addicted_hist, mh_hist, ari_hist).resolve_scale(
     x="independent",
     y="shared")
-st.altair_chart(all_charts,use_container_width=True)
+st.altair_chart(all_charts,width="stretch")
 
 st.caption("This tool is for educational purposes, not medical advice. ")
