@@ -9,7 +9,7 @@ The model was evaluated on a training set of data with 85% accuracy, interpreted
 https://www.kaggle.com/datasets/adilshamim8/social-media-addiction-vs-relationships/data
 
 ## Access the Dashboard Here: 
-https://masterej-robotics-mental-health-dashboard-streamlit-app-dkr3hc.streamlit.app/
+[https://mental-health-dashboard-e2dgeezf9sjq4egkcyiuc9.streamlit.app/](https://mental-health-dashboard-e2dgeezf9sjq4egkcyiuc9.streamlit.app/)
 > **Note:** This Streamlit app is hosted on Streamlit Community Cloud, so the first load may take **15–20 seconds**. Subsequent loads are usually faster.
 
 ## Demo Video:
