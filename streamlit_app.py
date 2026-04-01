@@ -5,16 +5,19 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import time
 import altair as alt
-from utils import rescale, create_histogram
+from utils import rescale, create_histogram, load_css
 from model_utils import calc_mh_score, calc_addicted_score
 
+st.set_page_config(
+    page_title="Student Mental Health Dashboard",
+    page_icon="📊",
+    layout="centered",
+    initial_sidebar_state="expanded"
+)
 with st.spinner("Loading Dashboard..."):
     time.sleep(0.3)
 
-def load_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-# load_css("style.css")
+#load_css("style.css")
 
 df = pd.read_csv("./data/Students_Social_Media_Addiction_FE.csv")
 

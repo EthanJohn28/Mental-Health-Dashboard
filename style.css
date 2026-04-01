@@ -1,27 +1,81 @@
 .stApp {
-    background-color: #21201fff;
-    font-family: 'Arial', sans-serif;
+    background-color: #0E1117;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    color: #FAFAFA;
+}
+
+h1, h2, h3 {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.stSubheader {
+    font-weight: 600;
+    color: #E0E0E0;
+}
+
+.stHeading {
+    text-align: center;
+    color: #3B82F6;
+    margin-bottom: 10px;
+}
+
+div[data-testid="stMetric"] {
+    background-color: #262730;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 div[data-testid="stMetricValue"] {
-    font-size: 24px !important;
-    color: #3c8df7ff;
+    font-size: 28px !important;
+    color: #3B82F6;
     font-weight: bold;
 }
 
+div[data-testid="stMetricLabel"] {
+    color: #AAAAAA;
+    font-size: 14px;
+}
+
 .stSlider input[type="range"] {
-    accent-color: #4B0082;
+    accent-color: #3B82F6;
+}
+.stButton > button {
+    background-color: #3B82F6;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    height: 3em;
+    width: 100%;
+    font-weight: 600;
+    transition: 0.2s ease-in-out;
+}
+
+.stButton > button:hover {
+    background-color: #2563EB;
+    transform: scale(1.02);
 }
 
 .stCaption { 
     font-size: 12px;
-    color: #555555
+    color: #888888;
 }
 
-.stSubheader {
-    font-weight: bold;
+.stNumberInput input, .stTextInput input {
+    background-color: #262730;
+    color: #FAFAFA;
+    border-radius: 8px;
 }
 
-.stHeading {
-    text-decoration: underline;;
+section[data-testid="stSidebar"] {
+    background-color: #1C1F26;
 }
+
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+}
+

@@ -1,5 +1,6 @@
 import altair as alt
 import pandas as pd
+import streamlit as st
 
 def rescale(value,min_val,max_val):
     if max_val - min_val == 0:
@@ -30,3 +31,7 @@ def create_histogram(data, pred_value, color, title, marker_color, x_domain):
         x="x",
         tooltip=[alt.Tooltip('x', title="Your Score")])
     return (hist + marker).properties(title=title, height=200, width=600)
+
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
