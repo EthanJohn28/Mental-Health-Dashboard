@@ -7,41 +7,51 @@ import time
 import altair as alt
 from utils import rescale, create_histogram, load_css
 from model_utils import calc_mh_score, calc_addicted_score
-from openai import OpenAI
+import requests
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+def generate_explanation(
+    sleep_hrs,
+    usage_hrs,
+    addicted_score,
+    mental_health_score,
+    academic_risk_index,
+    prediction
+):
 
-def generate_explanation(sleep_hrs, usage_hrs, addicted_score, mental_health_score, academic_risk_index, prediction):
     prompt = f"""
-    You are an educational analytics assistant.
+You are an educational analytics assistant.
 
-    Student Results:
+Student data:
+- Sleep: {sleep_hrs} hours
+- Social media: {usage_hrs} hours
+- Addiction score: {addicted_score:.1f}/10
+- Mental health score: {mental_health_score:.1f}/10
+- Academic risk index: {academic_risk_index:.2f}
+- Academic impact prediction: {"Yes" if prediction == 1 else "No"}
 
-    Sleep Hours: {sleep_hrs}
-    Social Media Hours: {usage_hrs}
+Explain:
+1. What these results mean
+2. The most important factors affecting the prediction
+3. Three practical recommendations
 
-    Estimated Addicted Score: {addicted_score:.2f}/10
-    Estimated Mental Health Score: {mental_health_score:.2f}/10
+Keep the response under 150 words.
+"""
 
-    Academic Risk Index: {academic_risk_index:.2f}
+    try:
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "llama3.2",
+                "prompt": prompt,
+                "stream": False
+            },
+            timeout=60
+        )
 
-    Academic Impact Prediction:
-    {"Yes" if prediction == 1 else "No"}
+        return response.json()["response"]
 
-    Explain:
-    1. What these results mean
-    2. Which factors appear strongest
-    3. Suggestions for improvement
-
-    Keep the response under 200 words.
-    """
-
-    response = client.responses.create(
-        model="gpt-5",
-        input=prompt
-    )
-
-    return response.output_text
+    except Exception as e:
+        return f"AI explanation unavailable: {e}"
 
 
 st.set_page_config(
@@ -232,7 +242,19 @@ st.caption("This tool is for educational purposes, not medical advice. ")
 
 st.subheader("Generate AI Explanation")
 
+if "explanation" not in st.session_state:
+    st.session_state.explanation = ""
+
 if st.button("Generate Explanation"):
     with st.spinner("Generating explanation..."):
-        explanation = generate_explanation(sleep_hrs, usage_hrs, addicted_score_pred, mh_score_pred, academic_risk_index, pred_class)  
-        st.write(explanation)
+        st.session_state.explanation = generate_explanation(
+            sleep_hrs,
+            usage_hrs,
+            addicted_score_pred,
+            mh_score_pred,
+            academic_risk_index,
+            pred_class
+        )
+
+if st.session_state.explanation:
+    st.write(st.session_state.explanation)
