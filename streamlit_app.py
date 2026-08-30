@@ -8,6 +8,11 @@ import altair as alt
 from utils import rescale, create_histogram, load_css
 from model_utils import calc_mh_score, calc_addicted_score
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 def generate_explanation(
     sleep_hrs,
@@ -17,11 +22,11 @@ def generate_explanation(
     academic_risk_index,
     prediction
 ):
-
     prompt = f"""
 You are an educational analytics assistant.
 
 Student data:
+
 - Sleep: {sleep_hrs} hours
 - Social media: {usage_hrs} hours
 - Addiction score: {addicted_score:.1f}/10
@@ -30,6 +35,7 @@ Student data:
 - Academic impact prediction: {"Yes" if prediction == 1 else "No"}
 
 Explain:
+
 1. What these results mean
 2. The most important factors affecting the prediction
 3. Three practical recommendations
@@ -38,17 +44,33 @@ Keep the response under 150 words.
 """
 
     try:
+        api_key = os.getenv("OLLAMA_API_KEY")
+
+        if not api_key:
+            return "Ollama API key not found."
+
         response = requests.post(
-            "http://localhost:11434/api/generate",
+            "https://ollama.com/api/chat",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
             json={
-                "model": "llama3.2",
-                "prompt": prompt,
+                "model": "gpt-oss:20b",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
                 "stream": False
             },
             timeout=60
         )
 
-        return response.json()["response"]
+        response.raise_for_status()
+
+        return response.json()["message"]["content"]
 
     except Exception as e:
         return f"AI explanation unavailable: {e}"

@@ -1,12 +1,15 @@
+import os
 import requests
+from dotenv import load_dotenv
 
-response = requests.post(
-    "http://localhost:11434/api/generate",
-    json={
-        "model": "llama3.2",
-        "prompt": "Explain why sleep is important for students.",
-        "stream": False
+load_dotenv()
+
+response = requests.get(
+    "https://ollama.com/api/tags",
+    headers={
+        "Authorization": f"Bearer {os.getenv('OLLAMA_API_KEY')}"
     }
 )
 
-print(response.json()["response"])
+print(response.status_code)
+print(response.json())
